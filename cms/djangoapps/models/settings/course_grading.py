@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from contentstore.signals_new import GRADING_POLICY_CHANGED
+from contentstore.signals.signals import GRADING_POLICY_CHANGED
 from xmodule.modulestore.django import modulestore
 
 
