@@ -6,7 +6,7 @@ from celery.states import FAILURE
 from django.core.management.base import BaseCommand, CommandError
 from pytz import utc
 
-from lms.djangoapps.instructor_task.models import InstructorTask, QUEUING
+from lms.djangoapps.instructor_task.models import InstructorTask, QUEUING, PROGRESS
 
 
 class Command(BaseCommand):
@@ -22,6 +22,14 @@ class Command(BaseCommand):
         """
         Add arguments to the command parser.
         """
+
+        parser.add_argument(
+            "task_state",
+            type=str,
+            choices=[QUEUING, PROGRESS],
+            help="choose the current task_state of tasks you want to fail"
+        )
+
         parser.add_argument(
             '--before',
             type=str,
@@ -52,6 +60,8 @@ class Command(BaseCommand):
             help='Specify the type of task that you want to fail.',
         )
 
+
+
     @staticmethod
     def parse_date(date_string):
         """
@@ -71,7 +81,7 @@ class Command(BaseCommand):
         before = self.parse_date(options['before'])
         after = self.parse_date(options['after'])
         filter_kwargs = {
-            "task_state": QUEUING,
+            "task_state": options['task_state'],
             "created__lte": before,
             "created__gte": after,
         }
